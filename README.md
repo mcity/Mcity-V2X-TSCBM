@@ -1,7 +1,7 @@
-# Mcity Battelle SPaT parser
-Battelle SPaT format parser/decoders in Python and C. Includes Python/C binding examples.
+# Mcity Traffic Signal Controller Broadcast Message (tscbm) SPaT parser
+Traffic Signal Controller Broadcast Mesasag SPaT format parser/decoders in Python and C. Includes Python/C binding examples.
 
-Used for parsing V2X Signal Phase and Timing Messages (SPaT) sent from traffic controllers in Mini SPaT / Battelle format.
+Used for parsing V2X Signal Phase and Timing Messages (SPaT) sent from traffic controllers in Mini SPaT / MIBSPaT format.
 
 ## Files
 ### test_battelle.py 
