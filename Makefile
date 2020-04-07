@@ -1,9 +1,9 @@
 all : library main
 
-library : battelle.c
-	cc -fPIC -shared -o libbattelle.so battelle.c
-main : battelle.c
-	cc battelle.c
+library : tscbm.c
+	cc -fPIC -shared -o libtscbm.so tscbm.c
+main : tscbm.c
+	cc tscbm.c
 
 clean :
-	rm -f a.out libbattelle.so
+	rm -f a.out libtscbm.so

@@ -4,17 +4,17 @@ Traffic Signal Controller Broadcast Mesasag SPaT format parser/decoders in Pytho
 Used for parsing V2X Signal Phase and Timing Messages (SPaT) sent from traffic controllers in Mini SPaT / MIBSPaT format.
 
 ## Files
-### test_battelle.py 
+### test_TSCBM.py 
 * Makes use of Python byte array and uses array indexing to parse results.
 
-### test_battelle_bit.py 
-* Uses python bitstring ConstBitStream to implement the same Battelle parser. About 30% slower than the byte array version, but easier to read and follow.
+### test_TSCBM_bit.py 
+* Uses python bitstring ConstBitStream to implement the same TSCBM parser. About 30% slower than the byte array version, but easier to read and follow.
 
-### test_c_battelle.py
-* Calls the C library version of the battelle parser from Python. Allocates and frees string buffers in C, so that library is "threadsafe".
+### test_c_TSCBM.py
+* Calls the C library version of the TSCBM parser from Python. Allocates and frees string buffers in C, so that library is "threadsafe".
 
-### battelle.c
-* Parser for Battelle format messages written in C. Can be built as stand alone example for shared library. Written for readability vs speed. Possible speed improvements are listed in comments in the C code.
+### TSCBM.c
+* Parser for TSCBM format messages written in C. Can be built as stand alone example for shared library. Written for readability vs speed. Possible speed improvements are listed in comments in the C code.
 
 ### Makefile
 * Builds both the stand alone and shared library version of the C code.
@@ -47,8 +47,8 @@ $ pip install -r requirements.txt # Install Python Packages
 Run
 ```sh
 $ source venv/bin/activate #Start a virtual environment
-$ python test_battelle.py #Try byte array version
-$ python test_battelle_bit.py #Try bitstring version
+$ python test_TSCBM.py #Try byte array version
+$ python test_TSCBM_bit.py #Try bitstring version
 ```
 
 ### C
@@ -65,7 +65,7 @@ $ make clean #Cleanup all build components.
 ```
 
 ### C Shared Library
-This builds the shared library version of the C battelle parser.
+This builds the shared library version of the C TSCBM parser.
 
 ```sh
 $ make library #Build both the main and library versions. Alternatively make all
@@ -91,7 +91,7 @@ $ make library #Build the C library
 Run
 ```sh
 $ source venv/bin/activate #Start a virtual environment
-$ python test_c_battelle.py #Test the shared library version of the code.
+$ python test_c_TSCBM.py #Test the shared library version of the code.
 ```
 
 Clean-up

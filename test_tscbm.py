@@ -1,6 +1,6 @@
 
 '''
-Example parsing Battelle formatted method with Python.
+Example parsing TSCBM formatted method with Python.
 '''
 
 def b2i(byte):
@@ -27,9 +27,9 @@ def hextobin(hexval):
         binval = '0' + binval
     return binval
 
-def parse_battelle(id, bytes, time_now):
+def parse_TSCBM(id, bytes, time_now):
     '''
-    Takes apart a battelle formatted SPaT message and makes a JSON object
+    Takes apart a TSCBM formatted SPaT message and makes a JSON object
     '''
     #byte 0: DynObj13 response byte (0xcd)
     #This is always CD
@@ -125,5 +125,5 @@ def parse_battelle(id, bytes, time_now):
 
 ## 494 is length (247 rmal for parsing)
 spat_data = 'cd100100dc02aa0000000000000000020000007d00dc02aa000000000300dc01db000000000000000004003f00bc003f00bc0000000005003f02d400000000000000000600000093003f02d40000000007003f00d2000000000000000008003f01a1003f01a100000000090000000000000000000000000a0000000000000000000000000b0000000000000000000000000c0000000000000000000000000d0000000000000000000000000e0000000000000000000000000f0000000000000000000000001000000000000000000000000000dd0000002200ff00000000000000000000000000000000085d003eca03ce00000000'
-payload = parse_battelle('10', bytes.fromhex(spat_data), 'Time')
+payload = parse_TSCBM('10', bytes.fromhex(spat_data), 'Time')
 print (payload)
