@@ -49,13 +49,24 @@ def parse_TSCBM(id, bytes, time_now):
         outOMax, off = readB(bytes, off, 2) #13, 14 Overlap Max
 
         phase = {
-            "phase": b2i(outP),
+            "phase": b2i(out_P),
             "color": 'RED',
             "flash": False,
-            "vehTimeMin": b2i(outVMin),
-            "vehTimeMax": b2i(outVMax),
-            "pedTimeMin": b2i(outPMin),
-            "pedTimeMax": b2i(outPMax),
+            "walkDont": False,
+            "walk": False,
+            "pedestrianClear": False,
+            "overlap": {
+                "green": False,
+                "red": False,
+                "yellow": False,
+                "flash": False
+            },
+            "vehTimeMin": round((b2i(out_VMin) or 0) * .10, 1), #self.__b2i(out_VMin), 
+            "vehTimeMax": round((b2i(out_VMax) or 0) * .10, 1), #self.__b2i(out_VMax), 
+            "pedTimeMin": round((b2i(out_PMin) or 0) * .10, 1), #self.__b2i(out_PMin), # round(self.__b2i(out_PMin) * Decimal(.10), 1),
+            "pedTimeMax": round((b2i(out_PMax) or 0) * .10, 1), #self.__b2i(out_PMax), # round(self.__b2i(out_PMax) * Decimal(.10), 1),
+            "overlapMin": round((b2i(out_OMax) or 0) * .10, 1),
+            "overlapMax": round((b2i(out_OMax) or 0) * .10, 1)
         }
         phases.append(phase)
 
@@ -70,8 +81,15 @@ def parse_TSCBM(id, bytes, time_now):
     outW, off = readB(bytes, 220, 2)
 
     # bytes 222-227: OverlapStatusReds, OverlapStatusYellows, OverlapStatusGreens (2 bytes bit-mapped for overlaps 1-16)
+    out_RO, off = readBytes(bytes, 222, 2)
+    out_YO, off = readBytes(bytes, 224, 2)
+    out_GO, off = readBytes(bytes, 226, 2)
+
     # bytes 228-229: FlashingOutputPhaseStatus	(2 bytes bit-mapped for phases 1-16)
-    outFl, off = readB(bytes, off, 2)
+    out_Fl, off = readBytes(bytes, 228, 2)
+
+    # bytes 230-231: FlashingOutputOverlapStatus	(2 bytes bit-mapped for overlaps 1-16)
+    out_Flo, off = readBytes(bytes, 230, 2)
 
     # bytes 230-231: FlashingOutputOverlapStatus	(2 bytes bit-mapped for overlaps 1-16)
     # byte 232: IntersectionStatus (1 byte) (bit-coded byte) 
@@ -93,32 +111,62 @@ def parse_TSCBM(id, bytes, time_now):
     #            
     time = '{}.{}'.format(b2i(outSS), b2i(outSSSS))
     #Set lights to Green/Yellow/Flash by phase.
-    greens = hextobin(outG.hex())
-    yellows = hextobin(outY.hex())
-    reds = hextobin(outR.hex())
-    flashing = hextobin(outFl.hex())
+
+    greens = hextobin(out_G.hex())
+    greens_overlap = hextobin(out_GO.hex())
+    yellows = hextobin(out_Y.hex())
+    yellows_overlap = hextobin(out_YO.hex())
+    reds = hextobin(out_R.hex())
+    reds_overlap = hextobin(out_RO.hex())
+
+    flashing = hextobin(out_Fl.hex())
+    flashing_overlap = hextobin(out_Flo.hex())
+    walkDont = hextobin(out_DW.hex())
+    walk = hextobin(out_W.hex())
+    pedClear = hextobin(out_PC.hex())
+
     for phase in phases:
         index = phase['phase']
-        if yellows[16-index] == 1:
+        if yellows[16-index] == '1':
             phase['color'] = "YELLOW"
-        if greens[16-index] == 1:
+        if greens[16-index] == '1':
             phase['color'] = "GREEN"
-        if flashing[16-index] == 1:
+        if greens_overlap[16-index] == '1':
+            phase['overlap']['green'] = True
+        if yellows_overlap[16-index] == '1':
+            phase['overlap']['yellow'] = True
+        if reds_overlap[16-index] == '1':
+            phase['overlap']['red'] = True
+        if flashing[16-index] == '1':
             phase['flash'] = True
+        if flashing[16-index] == '1':
+            phase['overlap']['flash'] = True
+        if walkDont[16-index] == '1':
+            phase['walkDont'] = True
+        if walk[16-index] == '1':
+            phase['walk'] = True
+        if pedClear[16-index] == '1':
+            phase['pedestrianClear'] = True
 
     payload = {
-            'id': id, 
-            'messageSet': 'BATTELLE',
-            'updated': time_now,
-            'timeSystem': time,
-            "green": greens,
-            "yellow": yellows,
-            "red": reds,
-            "walk": hextobin(outW.hex()),
-            "walkDont": hextobin(outDW.hex()),
-            "pedestrianClear": hextobin(outPC.hex()),
-            "flash": flashing,
-            'phases': phases
+        'id': id,
+        'messageSet': 'NTCIP',
+        'updated': time_stamp,
+        'timeSystem': time,
+        "green": greens,
+        "yellow": yellows,
+        "red": reds,
+        "walk": walk,
+        "walkDont": walkDont,
+        "pedestrianClear": pedClear,
+        "flash": flashing,
+        "overlap": {
+            "green": greens_overlap,
+            "red": reds_overlap,
+            "yellow": yellows_overlap,
+            "flash": flashing_overlap
+        },
+        'phases': phases
     }
 
     return payload

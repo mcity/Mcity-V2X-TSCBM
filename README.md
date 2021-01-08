@@ -72,6 +72,11 @@ $ make library #Build both the main and library versions. Alternatively make all
 $ ./a.out #Try the stand alone version. 
 ```
 
+Depending on your environment you may need to add your PWD to LD_LIBRARY_PATH so that Python can find the shared library.
+```sh
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD
+```
+
 Cleanup
 ```sh
 $ make clean #Cleanup all build components.
