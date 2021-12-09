@@ -40,13 +40,13 @@ def parse_TSCBM(id, bytes, time_now):
     phases=[]
     for i in range(block):
         #0x01 (phase#)	(1 byte) 
-        outP, off = readB(bytes, off, 1) #2
-        outVMin, off = readB(bytes, off, 2) #3,4
-        outVMax, off = readB(bytes, off, 2) #5, 6
-        outPMin, off = readB(bytes, off, 2) #7, 8
-        outPMax, off = readB(bytes, off, 2) #9, 10
-        outOMin, off = readB(bytes, off, 2) #11, 12 Overlap min
-        outOMax, off = readB(bytes, off, 2) #13, 14 Overlap Max
+        out_P, off = readB(bytes, off, 1) #2
+        out_VMin, off = readB(bytes, off, 2) #3,4
+        out_VMax, off = readB(bytes, off, 2) #5, 6
+        out_PMin, off = readB(bytes, off, 2) #7, 8
+        out_PMax, off = readB(bytes, off, 2) #9, 10
+        out_OMin, off = readB(bytes, off, 2) #11, 12 Overlap min
+        out_OMax, off = readB(bytes, off, 2) #13, 14 Overlap Max
 
         phase = {
             "phase": b2i(out_P),
@@ -71,25 +71,25 @@ def parse_TSCBM(id, bytes, time_now):
         phases.append(phase)
 
     # bytes 210-215: PhaseStatusReds, Yellows, Greens	(2 bytes bit-mapped for phases 1-16)
-    outR, off = readB(bytes, off, 2)
-    outY, off = readB(bytes, off, 2)
-    outG, off = readB(bytes, off, 2)
-
+    out_R, off = readB(bytes, off, 2)
+    out_Y, off = readB(bytes, off, 2)
+    out_G, off = readB(bytes, off, 2)
+    print(out_R, out_Y, out_G)
     # # bytes 216-221: PhaseStatusDontWalks, PhaseStatusPedClears, PhaseStatusWalks (2 bytes bit-mapped for phases 1-16)
-    outDW, off = readB(bytes, 216, 2)
-    outPC, off = readB(bytes, 218, 2)
-    outW, off = readB(bytes, 220, 2)
+    out_DW, off = readB(bytes, 216, 2)
+    out_PC, off = readB(bytes, 218, 2)
+    out_W, off = readB(bytes, 220, 2)
 
     # bytes 222-227: OverlapStatusReds, OverlapStatusYellows, OverlapStatusGreens (2 bytes bit-mapped for overlaps 1-16)
-    out_RO, off = readBytes(bytes, 222, 2)
-    out_YO, off = readBytes(bytes, 224, 2)
-    out_GO, off = readBytes(bytes, 226, 2)
+    out_RO, off = readB(bytes, 222, 2)
+    out_YO, off = readB(bytes, 224, 2)
+    out_GO, off = readB(bytes, 226, 2)
 
     # bytes 228-229: FlashingOutputPhaseStatus	(2 bytes bit-mapped for phases 1-16)
-    out_Fl, off = readBytes(bytes, 228, 2)
+    out_Fl, off = readB(bytes, 228, 2)
 
     # bytes 230-231: FlashingOutputOverlapStatus	(2 bytes bit-mapped for overlaps 1-16)
-    out_Flo, off = readBytes(bytes, 230, 2)
+    out_Flo, off = readB(bytes, 230, 2)
 
     # bytes 230-231: FlashingOutputOverlapStatus	(2 bytes bit-mapped for overlaps 1-16)
     # byte 232: IntersectionStatus (1 byte) (bit-coded byte) 
@@ -151,7 +151,7 @@ def parse_TSCBM(id, bytes, time_now):
     payload = {
         'id': id,
         'messageSet': 'NTCIP',
-        'updated': time_stamp,
+        'updated': None,
         'timeSystem': time,
         "green": greens,
         "yellow": yellows,
@@ -172,6 +172,6 @@ def parse_TSCBM(id, bytes, time_now):
     return payload
 
 ## 494 is length (247 rmal for parsing)
-spat_data = 'cd100100dc02aa0000000000000000020000007d00dc02aa000000000300dc01db000000000000000004003f00bc003f00bc0000000005003f02d400000000000000000600000093003f02d40000000007003f00d2000000000000000008003f01a1003f01a100000000090000000000000000000000000a0000000000000000000000000b0000000000000000000000000c0000000000000000000000000d0000000000000000000000000e0000000000000000000000000f0000000000000000000000001000000000000000000000000000dd0000002200ff00000000000000000000000000000000085d003eca03ce00000000'
+spat_data = 'CD1001000000000000000000000000020037013100370131000000000300000000000000000000000004000000FA000000000000000005000000000000000000000000060000000000000000000000000700000000000000000000000008000000000000000000000000090000000000000000000000000A0000000000000000000000000B0000000000000000000000000C0000000000000000000000000D0000000000000000000000000E0000000000000000000000000F00000000000000000000000010000000000000000000000000000200000008000A0000000000000000000000000000000008AF00BA2B034B00000002'
 payload = parse_TSCBM('10', bytes.fromhex(spat_data), 'Time')
 print (payload)
