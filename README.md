@@ -3,9 +3,12 @@ Traffic Signal Controller Broadcast Mesasag SPaT format parser/decoders in Pytho
 
 Used for parsing V2X Signal Phase and Timing Messages (SPaT) sent from traffic controllers in Mini SPaT / MIBSPaT format.
 
+***Bug fixes and updates to the original TSCBM for CAMP TOSCo, SAE CI and CTI T&V projects for MAP/SPAT Analysis***
+
 ## Files
 ### test_TSCBM.py 
 * Makes use of Python byte array and uses array indexing to parse results.
+* This a bug fixed version that works with the latest Python 3 version.  Used in my PCAP decoder to JSON converter used for the CI/CTI MAP/SPAT Analyzer.
 
 ### test_TSCBM_bit.py 
 * Uses python bitstring ConstBitStream to implement the same TSCBM parser. About 30% slower than the byte array version, but easier to read and follow.
